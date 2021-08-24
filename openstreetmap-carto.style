@@ -53,3 +53,8 @@ way        way_area     real         linear # This is calculated during import
 
 # Columns defined in openstreetmap-carto.lua file
 way        z_order      int4         linear
+
+# Contour lines
+node,way   contour      text         linear
+way        contour_ext  text         linear
+way        ele          text         linear
