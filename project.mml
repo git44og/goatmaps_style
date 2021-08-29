@@ -362,11 +362,77 @@ Layer:
 
   # START BLOCK hillshade
 
+  - id: dem-N46E011
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N46E011.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N46E012
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N46E012.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N46E013
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N46E013.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+
   - id: dem-N47E011
     geometry: raster
     Datasource:
       type: gdal
       file: /data/raster/hillshade_1/N47E011.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N47E012
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N47E012.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N47E013
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N47E013.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+
+  - id: dem-N48E011
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N48E011.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N48E012
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N48E012.tif
+      format: tiff
+    prope#rties:
+      minzoom: 10
+  - id: dem-N48E013
+    geometry: raster
+    Datasource:
+      type: gdal
+      file: /data/raster/hillshade_1/N48E013.tif
       format: tiff
     prope#rties:
       minzoom: 10

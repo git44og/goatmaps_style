@@ -24,7 +24,8 @@
     [zoom >= 13] {
       ::fill {
         line-width: @footway-width-z13;
-        opacity: 0.4;
+        opacity: 0.8;
+        line-offset: 2;
         [mtb_type = null],[sac_type >= 0] {
           [sac_type = 1] {
             line-color: #f7b71b;
