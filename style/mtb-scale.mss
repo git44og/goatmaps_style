@@ -25,7 +25,7 @@
       ::fill {
         line-width: @footway-width-z13;
         opacity: 0.8;
-        line-offset: 2;
+        line-offset: 0;
         [mtb_type = null],[sac_type >= 0] {
           [sac_type = 1] {
             line-color: #f7b71b;
@@ -62,6 +62,26 @@
           [mtb_type >= 6] {
             line-color: #742a1e;
           }
+        }
+      }
+    }
+  }
+}
+
+
+#roads-bycicle {
+  [feature = 'highway_track'],[feature = 'highway_path'] {
+    [zoom >= 12] {
+      ::fill {
+        line-width: 2;
+        opacity: 1;
+        [mtb_allowed = 0] {
+          line-color: #22DD22;
+          line-offset: 2;
+        }
+        [mtb_allowed = 1] {
+          line-color: #DD2222;
+          line-offset: 2;
         }
       }
     }

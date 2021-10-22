@@ -362,79 +362,21 @@ Layer:
 
   # START BLOCK hillshade
 
-  - id: dem-N46E011
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N46E011.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-  - id: dem-N46E012
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N46E012.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-  - id: dem-N46E013
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N46E013.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-
   - id: dem-N47E011
     geometry: raster
     Datasource:
       type: gdal
-      file: /data/raster/hillshade_1/N47E011.tif
+      file: /data/raster/hillshade_1/N47E011.transparent.tif
       format: tiff
-    prope#rties:
+    properties:
       minzoom: 10
   - id: dem-N47E012
     geometry: raster
     Datasource:
       type: gdal
-      file: /data/raster/hillshade_1/N47E012.tif
+      file: /data/raster/hillshade_1/N47E012.transparent.tif
       format: tiff
-    prope#rties:
-      minzoom: 10
-  - id: dem-N47E013
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N47E013.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-
-  - id: dem-N48E011
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N48E011.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-  - id: dem-N48E012
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N48E012.tif
-      format: tiff
-    prope#rties:
-      minzoom: 10
-  - id: dem-N48E013
-    geometry: raster
-    Datasource:
-      type: gdal
-      file: /data/raster/hillshade_1/N48E013.tif
-      format: tiff
-    prope#rties:
+    properties:
       minzoom: 10
 
   # END BLOCK hillshade
@@ -738,6 +680,55 @@ Layer:
                 AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
                 AND highway IS NOT NULL
                 AND (tags->'mtb:scale' != '' OR tags->'sac_scale' != '')  -- end of road select
+            ) AS features
+          ORDER BY
+            layernotnull,
+            z_order
+        ) AS roads_fill
+    properties:
+      minzoom: 10
+
+  - id: roads-bycicle
+    class: mtb-allowed
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      # This is one of the most complex layers, so it bears explaining in some detail
+      # It is necessary to
+      # - Have roads and railways in the same layer to get ordering right
+      # - Return two linestrings for ways which are both a road and railway
+      table: |-
+        (SELECT
+            way,
+            (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
+            mtb_allowed,
+            osm_id,
+            layernotnull
+          FROM ( -- begin "features" subselect that contains both roads and rail/aero
+            SELECT
+                way,
+                'highway_' || highway AS feature, -- only motorway to tertiary links are accepted later on
+                foot,
+                bicycle,
+                tracktype,
+                CASE
+                  WHEN ((bicycle  =  'yes' or tags ->'motor_vehicle' != '' or route = 'mtb' or tags->'mtb:scale' != '' or highway in ('tertiary', 'residential', 'unclassified')) and (bicycle  !=  'no' or bicycle is null)) THEN 0
+                  WHEN (bicycle  =  'no' or route = 'foot') THEN 1
+                  ELSE NULL
+                END AS mtb_allowed,
+                osm_id,
+                COALESCE(layer,0) AS layernotnull,
+                z_order
+              FROM planet_osm_line
+              WHERE (tunnel IS NULL OR NOT tunnel IN ('yes', 'building_passage'))
+                AND (covered IS NULL OR NOT covered = 'yes')
+                AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
+                AND highway IS NOT NULL
+                AND (
+                  (bicycle  =  'yes' or tags ->'motor_vehicle' != '' or route = 'mtb' or tags->'mtb:scale' != '' or highway in ('tertiary', 'residential', 'unclassified')) and (bicycle  !=  'no' or bicycle is null) 
+                  OR
+                  (bicycle  =  'no' or route = 'foot'))  -- end of road select
             ) AS features
           ORDER BY
             layernotnull,
